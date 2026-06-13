@@ -37,7 +37,7 @@ export default function App() {
           setScreen={setScreen}
         />
       ) : (
-        <SettingsScreen />
+        <SettingsScreen pills={pills} setPills={setPills} />
       )}
 
       {/* FLOATING BOTTOM NAV */}
@@ -48,7 +48,7 @@ export default function App() {
           alignSelf: "center",
           flexDirection: "row",
           backgroundColor: "white",
-          paddingHorizontal: 30,
+          paddingHorizontal: 25,
           paddingVertical: 15,
           borderRadius: 999,
           elevation: 8, // Android shadow

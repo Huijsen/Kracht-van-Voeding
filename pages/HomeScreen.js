@@ -7,16 +7,35 @@ export default function HomeScreen({ pills, setPills }) {
     const [pinVisible, setPinVisible] = React.useState(false);
     const [selectedId, setSelectedId] = React.useState(null);
     const [pin, setPin] = React.useState("");
+    const [showUpcoming, setShowUpcoming] = React.useState(false);
+
 
     const correctPin = "1234";
 
-  const toggleTaken = (id) => {
+    const toggleTaken = (id) => {
+    const today = new Date().toDateString();
+
     setPills(
-      pills.map((p) =>
-        p.id === id ? { ...p, taken: !p.taken } : p
-      )
+        pills.map((p) =>
+        p.id === id
+            ? {
+                ...p,
+                completedDates: p.completedDates?.includes(today)
+                ? p.completedDates.filter((d) => d !== today)
+                : [...(p.completedDates || []), today],
+            }
+            : p
+        )
     );
-  };
+    };
+
+  
+
+  const todayName = new Date().toLocaleDateString("en-US", { weekday: "short" });
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowName = tomorrow.toLocaleDateString("en-US", { weekday: "short" });
 
   
   const deletePill = (id) => {
@@ -32,12 +51,34 @@ export default function HomeScreen({ pills, setPills }) {
         alert("Wrong PIN");
     }
     };
-  // Split pills into Today and Tomorrow
-  const todayPills = pills.filter((p) => !p.everyOtherDay);
-  const tomorrowPills = pills.filter((p) => p.everyOtherDay);
+
+    const todayPills = pills.filter((p) =>
+    p.days?.includes(todayName)
+    );
+
+    const tomorrowPills = pills.filter((p) =>
+    p.days?.includes(tomorrowName)
+    );
+
+    const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+    const todayIndex = new Date().getDay();
+    const tomorrowIndex = (todayIndex + 1) % 7;
+
+    const upcomingPills = pills.filter((p) =>
+    p.days?.some((day) => {
+        const dayIndex = weekDays.indexOf(day);
+        return dayIndex !== todayIndex && dayIndex !== tomorrowIndex;
+    })
+    );
+
 
   // Progress for today's pills
-  const completed = todayPills.filter((p) => p.taken).length;
+  const today = new Date().toDateString();
+
+    const completed = todayPills.filter((p) =>
+    p.completedDates?.includes(today)
+    ).length;
   const total = todayPills.length;
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
 
@@ -50,79 +91,85 @@ export default function HomeScreen({ pills, setPills }) {
   const strokeDashoffset =
    circumference - circumference * progress;
 
-    const renderItem = ({ item, canToggle = true }) => (
+   const formatDays = (days) => days.join(", ");
+
+    const renderItem = ({ item, canToggle = true }) => {
+    const today = new Date().toDateString();
+    const isTakenToday = canToggle && item.completedDates?.includes(today);
+
+    return (
         <View
-            style={{
+        style={{
             flexDirection: "row",
             alignItems: "center",
             backgroundColor: "white",
             padding: 15,
             borderRadius: 16,
             marginBottom: 12,
-
-            // shadow (iOS)
             shadowColor: "#000",
             shadowOpacity: 0.08,
             shadowRadius: 8,
             shadowOffset: { width: 0, height: 3 },
-
-            // shadow (Android)
             elevation: 3,
-
             opacity: canToggle ? 1 : 0.6,
-            }}
+        }}
         >
-            {/* status dot */}
-            <View
+        <View
             style={{
-                width: 12,
-                height: 12,
-                borderRadius: 6,
-                backgroundColor: item.taken ? "#4CAF50" : "#D0D0D0",
-                marginRight: 12,
+            width: 12,
+            height: 12,
+            borderRadius: 6,
+            backgroundColor: isTakenToday ? "#4CAF50" : "#D0D0D0",
+            marginRight: 12,
             }}
-            />
+        />
 
-            {/* text */}
-            <TouchableOpacity
+        <TouchableOpacity
             style={{ flex: 1 }}
             disabled={!canToggle}
             onPress={() => toggleTaken(item.id)}
-            >
+        >
             <Text
-                style={{
+            style={{
                 fontSize: 16,
                 fontWeight: "600",
-                color: item.taken ? "#4CAF50" : "#111",
-                }}
-            >
-                {item.time}  ·  {item.name}
-            </Text>
-
-            <Text style={{ fontSize: 12, color: "#888", marginTop: 2 }}>
-                {item.taken ? "Completed" : "Pending"}
-            </Text>
-            </TouchableOpacity>
-
-            {/* delete */}
-            <TouchableOpacity
-            disabled={!canToggle}
-            onPress={() => {
-                setSelectedId(item.id);
-                setPinVisible(true);
+                color: isTakenToday ? "#4CAF50" : "#111",
             }}
             >
-            <Text
-                style={{
-                fontSize: 18,
-                color: canToggle ? "#ff4d4d" : "#ccc",
-                }}
-            >
-                ✕
+            {item.time} · {item.name}
             </Text>
-            </TouchableOpacity>
+
+            <Text style={{ fontSize: 12, color: "#888" }}>
+            {isTakenToday ? "Completed" : "Pending"}
+            </Text>
+        </TouchableOpacity>
+
+        {/* 
+        {canToggle && (
+        <TouchableOpacity
+            onPress={() => {
+            setSelectedId(item.id);
+            setPinVisible(true);
+            }}
+        >
+            <Text style={{ fontSize: 20, color: "#e94141", opacity: 0.6 }}>✕</Text>
+        </TouchableOpacity>
+        )}
+        */}
+
+        {/*
+        <TouchableOpacity
+        onPress={() => {
+            setSelectedId(item.id);
+            setPinVisible(true);
+        }}
+        >
+        <Text style={{ fontSize: 20, color: "#e94141", opacity: 0.6 }}>✕</Text>
+        </TouchableOpacity>
+        */}
         </View>
     );
+    };
 
   return (
 
@@ -238,10 +285,40 @@ export default function HomeScreen({ pills, setPills }) {
                 </View>
                 ))
             ) : (
-                <Text style={{ color: "gray", paddingHorizontal: 10 }}>
+                <Text style={{ color: "gray", paddingHorizontal: 0 }}>
                 No pills for tomorrow.
                 </Text>
             )}
+
+            {/* Upcoming Dropdown */}
+            <TouchableOpacity
+            onPress={() => setShowUpcoming(!showUpcoming)}
+            style={{ marginTop: 20, marginBottom: 10 }}
+            >
+            <Text style={{ color: "#666", fontWeight: "600", marginTop: 20}}>
+                Upcoming {showUpcoming ? "▴" : "▾"}
+            </Text>
+            </TouchableOpacity>
+
+            {showUpcoming && (
+                <>
+                    {upcomingPills.length > 0 ? (
+                    upcomingPills.map((item) => (
+                        <View key={item.id} style={{ marginBottom: 7 }}>
+                        {/* Days label */}
+                        <Text style={{ fontSize: 12, color: "#888", marginLeft: 3 }}>
+                            Upcoming on: {formatDays(item.days)}
+                        </Text>
+                        {renderItem({ item, canToggle: false })}
+                        </View>
+                    ))
+                    ) : (
+                    <Text style={{ color: "gray" }}>No upcoming pills.</Text>
+                    )}
+                </>
+                )}
+
+
             </>
         }
         keyExtractor={() => "dummy"}
