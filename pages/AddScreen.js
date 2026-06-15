@@ -8,7 +8,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
   const [minute, setMinute] = useState("00");
   const [days, setDays] = useState([]);
 
-  const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const weekDays = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
 
   const toggleDay = (day) => {
     if (days.includes(day)) {
@@ -51,7 +51,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
         marginBottom: 20,
         color: "#111"
       }}>
-        Add Pill 
+        Nieuw item
       </Text>
 
       {/* Card */}
@@ -70,11 +70,11 @@ export default function AddScreen({ pills, setPills, setScreen }) {
 
         {/* NAME */}
         <Text style={{ marginBottom: 6, color: "#666", fontWeight: "600" }}>
-          Name
+          Naam
         </Text>
 
         <TextInput
-          placeholder="e.g. Vitamin D"
+          placeholder="e.g. Vitamine D"
           value={name}
           onChangeText={setName}
           placeholderTextColor="#aaa"
@@ -90,7 +90,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
 
         {/* TIME */}
         <Text style={{ marginBottom: 6, color: "#666", fontWeight: "600" }}>
-          Time
+          Tijd
         </Text>
 
         <View style={{
@@ -121,7 +121,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
 
         {/* DAYS */}
         <Text style={{ marginBottom: 8, color: "#666", fontWeight: "600" }}>
-          Select Days
+          Selecteer dagen
         </Text>
 
         <View style={{
@@ -166,7 +166,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
           }}
         >
           <Text style={{ color: "white", fontWeight: "700" }}>
-            Save Pill
+            Opslaan
           </Text>
         </TouchableOpacity>
 

@@ -57,7 +57,7 @@ export default function SettingsScreen({ pills, setPills }) {
           marginLeft: 5,
         }}
       >
-        Overview
+        Overzicht
       </Text>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -77,7 +77,7 @@ export default function SettingsScreen({ pills, setPills }) {
               fontWeight: "700",
             }}
           >
-            Your Progress
+            Je voortgang
           </Text>
 
           <Text
@@ -92,7 +92,7 @@ export default function SettingsScreen({ pills, setPills }) {
           </Text>
 
           <Text style={{ color: "rgba(255,255,255,0.9)" }}>
-            Overall completion
+            Algemene voortgang
           </Text>
 
           <View
@@ -114,7 +114,7 @@ export default function SettingsScreen({ pills, setPills }) {
               </Text>
 
               <Text style={{ color: "rgba(255,255,255,0.9)" }}>
-                Supplements
+                Supplementen
               </Text>
             </View>
 
@@ -159,9 +159,10 @@ export default function SettingsScreen({ pills, setPills }) {
                 marginTop: 10,
                 fontWeight: "600",
                 fontSize: 16,
+                textAlign: "center",
               }}
             >
-              No supplements yet
+              Nog geen Voedingsmiddelen toegevoegd
             </Text>
 
             <Text
@@ -171,7 +172,7 @@ export default function SettingsScreen({ pills, setPills }) {
                 textAlign: "center",
               }}
             >
-              Add your first supplement to start tracking.
+              Voeg je eerste voedingsmiddel toe door op de "+" knop te drukken.
             </Text>
           </View>
         ) : (
@@ -214,7 +215,6 @@ export default function SettingsScreen({ pills, setPills }) {
                       style={{
                         fontSize: 18,
                         fontWeight: "700",
-                        marginLeft: -4,
                       }}
                     >
                       {pill.name}
@@ -234,7 +234,7 @@ export default function SettingsScreen({ pills, setPills }) {
                       >
                         {pill.time}
                       </Text>
-                      {" on "}
+                      {" op "}
                       {pill.days.join(", ")}
                     </Text>
                   </View>
@@ -286,9 +286,7 @@ export default function SettingsScreen({ pills, setPills }) {
                             marginBottom: 6,
                           }}
                         >
-                          {date.toLocaleDateString("en-US", {
-                            weekday: "short",
-                          })}
+                          {date.toLocaleDateString("nl-NL", { weekday: "short" })}
                         </Text>
 
                         <View
@@ -346,11 +344,11 @@ export default function SettingsScreen({ pills, setPills }) {
             }}
           >
             <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 5 }}>
-              Confirm Delete
+              Bevestig verwijdering
             </Text>
 
             <Text style={{ fontSize: 13, color: "#666", marginBottom: 15 }}>
-              Enter your PIN to remove this supplement
+              Voer je PIN in om dit supplement te verwijderen.
             </Text>
 
             <TextInput
@@ -389,7 +387,7 @@ export default function SettingsScreen({ pills, setPills }) {
                 }}
               >
                 <Text style={{ fontWeight: "600", color: "#333" }}>
-                  Cancel
+                  Annuleer
                 </Text>
               </TouchableOpacity>
 
@@ -405,7 +403,7 @@ export default function SettingsScreen({ pills, setPills }) {
                 }}
               >
                 <Text style={{ fontWeight: "600", color: "white" }}>
-                  Delete
+                  Verwijderen
                 </Text>
               </TouchableOpacity>
             </View>

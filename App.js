@@ -83,7 +83,7 @@ export default function App() {
           style={{ marginHorizontal: 20 }}
         >
           <Ionicons
-            name={screen === "settings" ? "settings" : "settings-outline"}
+            name={screen === "settings" ? "nutrition" : "nutrition-outline"}
             size={28}
           />
         </TouchableOpacity>

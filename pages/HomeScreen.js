@@ -186,7 +186,7 @@ export default function HomeScreen({ pills, setPills }) {
         }}
       >
         <Text style={{ fontSize: 28, fontWeight: "bold" }}>
-          My Pills
+          Mijn Voeding
         </Text>
 
         {/* Completion Circle */}
@@ -251,7 +251,7 @@ export default function HomeScreen({ pills, setPills }) {
                 marginBottom: 10,
                 }}
             >
-                Today
+                Vandaag
             </Text>
 
             {todayPills.length > 0 ? (
@@ -262,7 +262,7 @@ export default function HomeScreen({ pills, setPills }) {
                 ))
             ) : (
                 <Text style={{ color: "gray", marginBottom: 20 }}>
-                No pills for today.
+                Geen supplementen of voeding vandaag.
                 </Text>
             )}
 
@@ -275,7 +275,7 @@ export default function HomeScreen({ pills, setPills }) {
                 marginBottom: 10,
                 }}
             >
-                Tomorrow
+                Morgen
             </Text>
 
             {tomorrowPills.length > 0 ? (
@@ -286,7 +286,7 @@ export default function HomeScreen({ pills, setPills }) {
                 ))
             ) : (
                 <Text style={{ color: "gray", paddingHorizontal: 0 }}>
-                No pills for tomorrow.
+                Geen supplementen of voeding voor morgen.
                 </Text>
             )}
 
@@ -296,7 +296,7 @@ export default function HomeScreen({ pills, setPills }) {
             style={{ marginTop: 20, marginBottom: 10 }}
             >
             <Text style={{ color: "#666", fontWeight: "600", marginTop: 20}}>
-                Upcoming {showUpcoming ? "▴" : "▾"}
+                Aankomend {showUpcoming ? "▴" : "▾"}
             </Text>
             </TouchableOpacity>
 
@@ -307,13 +307,13 @@ export default function HomeScreen({ pills, setPills }) {
                         <View key={item.id} style={{ marginBottom: 7 }}>
                         {/* Days label */}
                         <Text style={{ fontSize: 12, color: "#888", marginLeft: 3 }}>
-                            Upcoming on: {formatDays(item.days)}
+                            Aankomend op: {formatDays(item.days)}
                         </Text>
                         {renderItem({ item, canToggle: false })}
                         </View>
                     ))
                     ) : (
-                    <Text style={{ color: "gray" }}>No upcoming pills.</Text>
+                    <Text style={{ color: "gray" }}>Geen aankomende supplementen of voedingsmiddelen.</Text>
                     )}
                 </>
                 )}
