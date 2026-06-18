@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, Modal, TextInput } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 
 export default function SettingsScreen({ pills, setPills }) {
 
@@ -7,7 +9,24 @@ export default function SettingsScreen({ pills, setPills }) {
   const [selectedId, setSelectedId] = React.useState(null);
   const [pin, setPin] = React.useState("");
 
+  const [editVisible, setEditVisible] = React.useState(false);
+  const [editId, setEditId] = React.useState(null);
+
+  const [editHour, setEditHour] = React.useState("08");
+  const [editMinute, setEditMinute] = React.useState("00");
+  const [editDays, setEditDays] = React.useState([]);
+
   const correctPin = "1234";
+
+  const weekDays = ["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"];
+
+  const toggleEditDay = (day) => {
+    if (editDays.includes(day)) {
+      setEditDays(editDays.filter((d) => d !== day));
+    } else {
+      setEditDays([...editDays, day]);
+    }
+  };
 
   const deletePill = (id) => {
     setPills(pills.filter((p) => p.id !== id));
@@ -37,6 +56,21 @@ export default function SettingsScreen({ pills, setPills }) {
     (sum, pill) => sum + (pill.days?.length || 0),
     0
   );
+
+  const saveEdit = () => {
+    const time = `${editHour}:${editMinute}`;
+
+    setPills(
+      pills.map((p) =>
+        p.id === editId
+          ? { ...p, time, days: editDays }
+          : p
+      )
+    );
+
+    setEditVisible(false);
+    setEditId(null);
+  };
 
   const completionPercent =
     totalScheduled === 0
@@ -241,6 +275,19 @@ export default function SettingsScreen({ pills, setPills }) {
 
                   <TouchableOpacity
                     onPress={() => {
+                      setEditId(pill.id);
+                      const [h, m] = pill.time.split(":");
+                      setEditHour(h);
+                      setEditMinute(m);
+                      setEditDays(pill.days);
+                      setEditVisible(true);
+                    }}
+                  >
+                    <MaterialIcons name="edit" size={22} color="grey" />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() => {
                       setSelectedId(pill.id);
                       setPinVisible(true);
                     }}
@@ -410,6 +457,100 @@ export default function SettingsScreen({ pills, setPills }) {
           </View>
         </View>
       </Modal> 
+
+      <Modal visible={editVisible} transparent animationType="fade">
+        <View style={{
+          flex: 1,
+          backgroundColor: "rgba(0,0,0,0.5)",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          
+          <View style={{
+            backgroundColor: "white",
+            padding: 18,
+            borderRadius: 22,
+            width: "85%"
+          }}>
+
+            <Text style={{ marginBottom: 6, color: "#666", fontWeight: "600" }}>
+              Tijd
+            </Text>
+
+            <View style={{
+              flexDirection: "row",
+              marginBottom: 18,
+              backgroundColor: "#FAFAFA",
+              borderRadius: 12,
+              padding: 6
+            }}>
+              
+              <View style={{ flex: 1 }}>
+                <Picker selectedValue={editHour} onValueChange={setEditHour}>
+                  {Array.from({ length: 24 }, (_, i) => {
+                    const v = i.toString().padStart(2, "0");
+                    return <Picker.Item key={v} label={v} value={v} />;
+                  })}
+                </Picker>
+              </View>
+
+              <View style={{ flex: 1 }}>
+                <Picker selectedValue={editMinute} onValueChange={setEditMinute}>
+                  {Array.from({ length: 60 }, (_, i) => {
+                    const v = i.toString().padStart(2, "0");
+                    return <Picker.Item key={v} label={v} value={v} />;
+                  })}
+                </Picker>
+              </View>
+
+            </View>
+
+            {/* DAYS (same buttons as AddScreen) */}
+            <Text style={{ marginBottom: 8, color: "#666", fontWeight: "600" }}>
+              Selecteer dagen
+            </Text>
+
+            <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 18 }}>
+              {weekDays.map((day) => (
+                <TouchableOpacity
+                  key={day}
+                  onPress={() => toggleEditDay(day)}
+                  style={{
+                    paddingVertical: 8,
+                    paddingHorizontal: 14,
+                    borderRadius: 14,
+                    margin: 4,
+                    backgroundColor: editDays.includes(day) ? "#4CAF50" : "#EAEAEA",
+                  }}
+                >
+                  <Text style={{
+                    color: editDays.includes(day) ? "white" : "#333",
+                    fontWeight: "600"
+                  }}>
+                    {day}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            {/* SAVE */}
+            <TouchableOpacity
+              onPress={saveEdit}
+              style={{
+                backgroundColor: "#111",
+                padding: 15,
+                borderRadius: 14,
+                alignItems: "center"
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "700" }}>
+                Opslaan
+              </Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
 
     </View>
   );

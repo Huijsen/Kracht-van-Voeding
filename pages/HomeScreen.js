@@ -31,12 +31,32 @@ export default function HomeScreen({ pills, setPills }) {
 
   
 
-  const todayName = new Date().toLocaleDateString("en-US", { weekday: "short" });
+    const dayMap = {
+    0: "Zo",
+    1: "Ma",
+    2: "Di",
+    3: "Wo",
+    4: "Do",
+    5: "Vr",
+    6: "Za",
+    };
+
+    const todayIndex = new Date().getDay();
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowName = tomorrow.toLocaleDateString("en-US", { weekday: "short" });
+    const tomorrowIndex = tomorrow.getDay();
 
+    const todayName = dayMap[todayIndex];
+    const tomorrowName = dayMap[tomorrowIndex];
+
+    const todayPills = pills.filter((p) =>
+    p.days?.includes(todayName)
+    );
+
+    const tomorrowPills = pills.filter((p) =>
+    p.days?.includes(tomorrowName)
+    );
   
   const deletePill = (id) => {
     setPills(pills.filter((p) => p.id !== id));
@@ -52,18 +72,8 @@ export default function HomeScreen({ pills, setPills }) {
     }
     };
 
-    const todayPills = pills.filter((p) =>
-    p.days?.includes(todayName)
-    );
 
-    const tomorrowPills = pills.filter((p) =>
-    p.days?.includes(tomorrowName)
-    );
-
-    const weekDays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-
-    const todayIndex = new Date().getDay();
-    const tomorrowIndex = (todayIndex + 1) % 7;
+    const weekDays = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
     const upcomingPills = pills.filter((p) =>
     p.days?.some((day) => {
