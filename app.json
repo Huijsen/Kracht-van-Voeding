@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.caspr.MyApp",
+      "bundleIdentifier": "com.caspr.krachtvvoeding",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
