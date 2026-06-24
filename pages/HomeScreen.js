@@ -26,7 +26,7 @@ export default function HomeScreen({ pills, setPills }) {
     React.useEffect(() => {
         const interval = setInterval(() => {
             setPills((prev) => cleanOldTodos(prev));
-        }, 1000); // check every 1 sec
+        }, 3600000); // check every 1 hour
 
         return () => clearInterval(interval);
     }, []);
