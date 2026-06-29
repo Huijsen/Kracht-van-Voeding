@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Modal, TextInput } from "reac
 import { MaterialIcons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 
+
 export default function SettingsScreen({ pills, setPills }) {
 
   const [pinVisible, setPinVisible] = React.useState(false);
@@ -11,6 +12,8 @@ export default function SettingsScreen({ pills, setPills }) {
 
   const [editVisible, setEditVisible] = React.useState(false);
   const [editId, setEditId] = React.useState(null);
+
+  const [editMode, setEditMode] = React.useState(false);
 
   const [editHour, setEditHour] = React.useState("08");
   const [editMinute, setEditMinute] = React.useState("00");
@@ -28,13 +31,12 @@ export default function SettingsScreen({ pills, setPills }) {
     }
   };
 
-  const deletePill = (id) => {
-    setPills(pills.filter((p) => p.id !== id));
-  };
-
   const confirmDelete = () => {
     if (pin === correctPin) {
-      deletePill(selectedId);
+      setPills((currentPills) =>
+        currentPills.filter((p) => p.id !== selectedId)
+      );
+
       setPin("");
       setPinVisible(false);
       setSelectedId(null);
@@ -45,14 +47,18 @@ export default function SettingsScreen({ pills, setPills }) {
 
   const today = new Date();
 
-  const totalSupplements = pills.length;
+  const scheduledPills = pills.filter(
+    (pill) => pill.type === "scheduled"
+  );
 
-  const totalTaken = pills.reduce(
+  const totalSupplements = scheduledPills.length;
+
+  const totalTaken = scheduledPills.reduce(
     (sum, pill) => sum + (pill.completedDates || []).length,
     0
   );
 
-  const totalScheduled = pills.reduce(
+  const totalScheduled = scheduledPills.reduce(
     (sum, pill) => sum + (pill.days?.length || 0),
     0
   );
@@ -80,19 +86,50 @@ export default function SettingsScreen({ pills, setPills }) {
           Math.round((totalTaken / totalScheduled) * 100)
         );
 
+  const normalizeCategory = (cat) => {
+    if (!cat) return "Overig";
+
+    const lower = cat.toLowerCase();
+
+    if (lower === "voeding") return "Voeding";
+    if (lower === "supplement") return "Supplementen";
+
+    return "Overig";
+  };
+
+  const CATEGORIES = ["Voeding", "Overig", "Supplementen"];
+
+  const groupedScheduled = CATEGORIES.map((cat) => ({
+    category: cat,
+    items: scheduledPills.filter(
+      (p) => normalizeCategory(p.category) === cat
+    ),
+  })).filter((g) => g.items.length > 0);
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text
-        style={{
-          fontSize: 28,
-          fontWeight: "bold",
-          marginTop: 15,
-          marginBottom: 20,
-          marginLeft: 5,
-        }}
-      >
-        Overzicht
-      </Text>
+      <View style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: 15,
+        marginBottom: 20,
+      }}>
+        <Text style={{ fontSize: 28, fontWeight: "bold", marginLeft: 5 }}>
+          Overzicht
+        </Text>
+
+        <TouchableOpacity
+          onPress={() => setEditMode(!editMode)}
+          style={{ flexDirection: "row", alignItems: "center", marginRight: 5 }}
+        >
+          <MaterialIcons
+            name={editMode ? "check" : "menu"}
+            size={22}
+            color="grey"
+          />
+        </TouchableOpacity>
+      </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Progress Card */}
@@ -171,7 +208,7 @@ export default function SettingsScreen({ pills, setPills }) {
         </View>
 
         {/* Empty State */}
-        {pills.length === 0 ? (
+        {scheduledPills.length === 0 ? (
           <View
             style={{
               backgroundColor: "white",
@@ -210,32 +247,54 @@ export default function SettingsScreen({ pills, setPills }) {
             </Text>
           </View>
         ) : (
-          pills.map((pill) => {
-            const last7Days = Array.from(
-              { length: 7 },
-              (_, index) => {
-                const date = new Date();
-                date.setDate(today.getDate() - (6 - index));
-                return date;
-              }
-            );
-
-            return (
+          groupedScheduled.map((group) => (
+            <View key={group.category}>
               <View
-                key={pill.id}
                 style={{
-                  backgroundColor: "white",
-                  padding: 20,
-                  borderRadius: 20,
-                  marginBottom: 16,
-
-                  shadowColor: "#000",
-                  shadowOpacity: 0.08,
-                  shadowRadius: 8,
-                  shadowOffset: { width: 0, height: 3 },
-                  elevation: 3,
+                  backgroundColor: "#F3F4F6",
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 10,
+                  marginTop: 20,
+                  marginBottom: 10,
                 }}
               >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#111",
+                  }}
+                >
+                  {group.category}
+                </Text>
+              </View>
+
+              {group.items.map((pill) => {
+                const last7Days = Array.from(
+                  { length: 7 },
+                  (_, index) => {
+                    const date = new Date();
+                    date.setDate(today.getDate() - (6 - index));
+                    return date;
+                  }
+                );
+
+                return (
+                  <View
+                    key={pill.id}
+                    style={{
+                      backgroundColor: "white",
+                      padding: 15,
+                      borderRadius: 20,
+                      marginBottom: 16,
+                      shadowColor: "#000",
+                      shadowOpacity: 0.08,
+                      shadowRadius: 8,
+                      shadowOffset: { width: 0, height: 3 },
+                      elevation: 3,
+                    }}
+                  >
                 {/* Header */}
                 <View
                   style={{
@@ -269,40 +328,38 @@ export default function SettingsScreen({ pills, setPills }) {
                         {pill.time}
                       </Text>
                       {" op "}
-                      {pill.days.join(", ")}
+                      {(pill.days || []).join(", ")}
                     </Text>
                   </View>
 
-                  <TouchableOpacity
-                    onPress={() => {
-                      setEditId(pill.id);
-                      const [h, m] = pill.time.split(":");
-                      setEditHour(h);
-                      setEditMinute(m);
-                      setEditDays(pill.days);
-                      setEditVisible(true);
-                    }}
-                  >
-                    <MaterialIcons name="edit" size={22} color="grey" />
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      setSelectedId(pill.id);
-                      setPinVisible(true);
-                    }}
-                    style={{ padding: 6 }}
-                  >
-                    <Text
-                      style={{
-                        color: "#ff0400",
-                        fontSize: 20,
-                        opacity: 0.6,
+                  {editMode && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setEditId(pill.id);
+                        const [h, m] = (pill.time || "08:00").split(":");
+                        setEditHour(h);
+                        setEditMinute(m);
+                        setEditDays(pill.days || []);
+                        setEditVisible(true);
                       }}
                     >
-                      ✕
-                    </Text>
-                  </TouchableOpacity>
+                      <MaterialIcons name="edit" size={22} color="grey" />
+                    </TouchableOpacity>
+                  )}
+
+                  {editMode && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setSelectedId(pill.id);
+                        setPinVisible(true);
+                      }}
+                      style={{ padding: 6 }}
+                    >
+                      <Text style={{ color: "#ff0400", fontSize: 20, opacity: 0.6 }}>
+                        ✕
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
 
 
@@ -364,8 +421,10 @@ export default function SettingsScreen({ pills, setPills }) {
                 </View>
               </View>
             );
-          })
-        )}
+          })}
+          </View>
+        ))
+      )}
       </ScrollView>
 
       <Modal visible={pinVisible} transparent animationType="fade">
