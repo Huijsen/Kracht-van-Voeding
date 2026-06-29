@@ -249,20 +249,26 @@ export default function SettingsScreen({ pills, setPills }) {
         ) : (
           groupedScheduled.map((group) => (
             <View key={group.category}>
-              <Text
+              <View
                 style={{
-                  fontSize: 13,
-                  fontWeight: "700",
-                  color: "#888",
-                  marginBottom: 6,
-                  marginTop: 10,
-                  marginLeft: 5,
-                  textTransform: "uppercase",
-                  letterSpacing: 0.8,
+                  backgroundColor: "#F3F4F6",
+                  paddingVertical: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 10,
+                  marginTop: 20,
+                  marginBottom: 10,
                 }}
               >
-                {group.category}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#111",
+                  }}
+                >
+                  {group.category}
+                </Text>
+              </View>
 
               {group.items.map((pill) => {
                 const last7Days = Array.from(
