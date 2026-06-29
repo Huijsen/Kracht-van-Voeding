@@ -134,7 +134,7 @@ export default function AddScreen({ pills, setPills, setScreen }) {
 
       {/* SWITCH */}
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 20 }}>
-        <Text style={{ marginRight: 10 }}>Schema</Text>
+        <Text style={{ color: "#666", fontWeight: "600" }}>Schema</Text>
         <Switch value={isScheduled} onValueChange={setIsScheduled} />
       </View>
 

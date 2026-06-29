@@ -138,7 +138,6 @@ export default function SettingsScreen({ pills, setPills }) {
             backgroundColor: "#4CAF50",
             borderRadius: 24,
             padding: 22,
-            marginBottom: 22,
           }}
         >
           <Text
@@ -251,19 +250,18 @@ export default function SettingsScreen({ pills, setPills }) {
             <View key={group.category}>
               <View
                 style={{
-                  backgroundColor: "#F3F4F6",
                   paddingVertical: 8,
                   paddingHorizontal: 12,
                   borderRadius: 10,
                   marginTop: 20,
-                  marginBottom: 10,
                 }}
               >
                 <Text
                   style={{
                     fontSize: 16,
-                    fontWeight: "700",
+                    fontWeight: "400",
                     color: "#111",
+                    opacity: 0.6,
                   }}
                 >
                   {group.category}
@@ -287,7 +285,7 @@ export default function SettingsScreen({ pills, setPills }) {
                       backgroundColor: "white",
                       padding: 15,
                       borderRadius: 20,
-                      marginBottom: 16,
+                      marginBottom: 10,
                       shadowColor: "#000",
                       shadowOpacity: 0.08,
                       shadowRadius: 8,
